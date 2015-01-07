@@ -16,6 +16,11 @@ function usage(){
     exit 1
 }
 
+if ($scriptDir -eq $null){
+	echo "Target dir does not exist"
+	exit 1
+}
+
 $scriptDirExists = Test-Path $scriptDir
 if ($scriptDirExists -eq $false){
 	echo "Target dir does not exist"
