@@ -27,8 +27,8 @@ if ($scriptDirExists -eq $false){
 	exit 1
 }
 
-$targets = (ls $scriptDir).FullName -match ".ps1$|.cmd$|.exe$|.bat$"
-
+$targets = (ls $scriptDir).FullName | select-string ".ps1$|.cmd$|.exe$|.bat$"
+echo $targets
 if ($list -eq $true){
 	$targets
 	exit 0
@@ -38,13 +38,17 @@ $envDir = "$scriptDir\..\environment.d\"
 $envDirExists = Test-Path $envDir
 
 if ($envDirExists -eq $true) {
-	$files = (ls $envDir).FullName -match ".ps1$"
+	# We only source powershell scripts. Any environment variables
+	# you need should be in a ps1 file
+	$files = (ls $envDir).FullName | select-string ".ps1$"
 	foreach ($i in $files){
 		. $i
 	}
 }
 
-foreach ($i in $targets){
-	echo "Running $i"
-	& $i
+if ($targets -ne $false){
+	foreach ($i in $targets){
+		echo "Running $i"
+		& $i
+	}
 }
